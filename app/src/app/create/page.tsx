@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { SignedIn } from "@clerk/nextjs"
+import { SignedIn, useAuth } from "@clerk/nextjs"
 import { ChevronLeft } from "lucide-react"
 import { NextPage } from "next"
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector"
@@ -19,13 +19,18 @@ import { useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TabsContent } from "@radix-ui/react-tabs"
 import { Switch } from "@/components/ui/switch"
+import { deriveKeys } from "@/utils/derive"
+import { deployMultisig } from "@/utils/deploy"
 
 const Create: NextPage = () => {
+  const { userId } = useAuth()
+  const { address, privateKey } = deriveKeys(userId)
+
   const CHAINS: Option[] = [
-    { label: "BNB Smart Chain Testnet", value: "bsc" },
-    { label: "Optimism Sepolia", value: "op" },
-    { label: "Linea Sepolia", value: "linea" },
-    { label: "NeonEVM Devnet", value: "neonevm" },
+    { label: "BNB Smart Chain Testnet", value: "97" },
+    { label: "Linea Sepolia", value: "59141" },
+    { label: "Optimism Sepolia", value: "11155420" },
+    { label: "NeonEVM Devnet", value: "245022926" },
   ]
 
   const [threshold, setThreshold] = useState(1)
@@ -37,14 +42,19 @@ const Create: NextPage = () => {
   const [recoveryPeriod, setRecoveryPeriod] = useState(43830)
 
   const deploy = async () => {
-    console.log({ owners, threshold, selectedChains, activeTab })
+    if (!address || !privateKey) return undefined
+
+    const deployChains = selectedChains.map((chain) => Number(chain.value))
 
     switch (activeTab) {
       case "single":
+        deployMultisig(deployChains, [address], 1, privateKey)
         break
       case "multi":
+        deployMultisig(deployChains, owners, threshold, privateKey)
         break
       case "vault":
+        deployMultisig(deployChains, owners, owners.length, privateKey)
         break
     }
   }
@@ -237,7 +247,9 @@ const Create: NextPage = () => {
                             type="number"
                             placeholder="in minutes..."
                             value={recoveryPeriod}
-                            onChange={(e) => setRecoveryPeriod(e.target.valueAsNumber)}
+                            onChange={(e) =>
+                              setRecoveryPeriod(e.target.valueAsNumber)
+                            }
                           />
                         </div>
                         <Label>Beneficiaries</Label>

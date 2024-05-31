@@ -9,19 +9,14 @@ export const faucetDrip = async (address: string) => {
     const balance = await provider.getBalance(address)
 
     if (balance === BigInt(0)) {
-      console.log(
-        `Dripping 0.001 ETH on chain ${chainId} for address ${address}`
-      )
-
-      const wallet = new ethers.Wallet(
-        env.NEXT_PUBLIC_FAUCET_PRIVATE_KEY,
-        provider
-      )
+      console.log(`Dripping 0.001 ETH on chain ${chainId} for address ${address}`)
+      
+      const wallet = new ethers.Wallet(env.NEXT_PUBLIC_FAUCET_PRIVATE_KEY, provider)
       const amount = ethers.parseEther("0.001")
 
       const result = await wallet.sendTransaction({
         to: address,
-        value: amount,
+        value: amount
       })
       console.log(`Transaction hash: ${result.hash}`)
     }
