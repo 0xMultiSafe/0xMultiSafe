@@ -1,12 +1,8 @@
-import { NextPage } from 'next'
-import { FC } from 'react'
+import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs"
+import { NextPage } from "next"
 
 const Home: NextPage = () => {
-  return (
-    <>
-      
-    </>
-  )
+  return <div>Home</div>
 }
 
 export default Home

@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Bricolage_Grotesque } from "next/font/google"
 import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
+import { ClerkProvider } from "@clerk/nextjs"
+import Layout from "@/components/layout"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["200", "300", "400", "500", "600", "700", "800"],
@@ -15,17 +17,19 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <link rel="manifest" href="/manifest.json" />
-      <body
-        className={cn(
-          "min-h-screen bg-background antialiased",
-          bricolageGrotesque.className
-        )}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <link rel="manifest" href="/manifest.json" />
+        <body
+          className={cn(
+            "min-h-screen bg-background antialiased",
+            bricolageGrotesque.className
+          )}
+        >
+          <Layout>{children}</Layout>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
 
