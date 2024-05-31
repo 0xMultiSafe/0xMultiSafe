@@ -1,26 +1,20 @@
 import { task } from "hardhat/config"
 import { save } from "./utils/save"
 import { verify } from "./utils/verify"
-import { parseEther } from "viem"
 
 task("deploy", "📰 Deploys a contract, saves the artifact and verifies it.")
-  .addParam("contract", "Name of the contract to deploy.", "Lock")
-  .addFlag("save", "Flag to indicate whether to save the contract or not")
-  .addFlag("verify", "Flag to indicate whether to verify the contract or not")
-  .setAction(async (args, { viem, run, network }) => {
-    const Contract = await viem.deployContract(
-      args.contract,
-      [new Date().getTime() + 100],
-      {
-        value: parseEther("0.1"),
-      }
-    )
-    console.log(
-      `📰 Contract ${Contract.address} deployed to ${network.name} successfully!`
-    )
+    .addParam("contract", "Name of the contract to deploy.", "Create2Deployer")
+    .addFlag("save", "Flag to indicate whether to save the contract or not")
+    .addFlag("verify", "Flag to indicate whether to verify the contract or not")
+    .setAction(async (args, { viem, network, run }) => {
+        const Contract = await viem.deployContract(args.contract, [])
 
-    const chainId = (await viem.getPublicClient()).chain.id
+        console.log(
+            `📰 Contract ${Contract.address} deployed to ${network.name} successfully!`
+        )
 
-    args.save && (await save(chainId, Contract.address, Contract.abi))
-    args.verify && (await verify(run, Contract.address, []))
-  })
+        const chainId = (await viem.getPublicClient()).chain.id
+
+        args.save && (await save(chainId, Contract.address, Contract.abi))
+        args.verify && (await verify(run, Contract.address, []))
+    })
