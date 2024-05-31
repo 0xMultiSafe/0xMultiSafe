@@ -4,6 +4,7 @@ import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
 import { ClerkProvider } from "@clerk/nextjs"
 import Layout from "@/components/layout"
+import { Toaster } from '@/components/ui/sonner'
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["200", "300", "400", "500", "600", "700", "800"],
@@ -26,6 +27,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             bricolageGrotesque.className
           )}
         >
+          <Toaster />
           <Layout>{children}</Layout>
         </body>
       </html>

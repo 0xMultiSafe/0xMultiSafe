@@ -19,7 +19,13 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { FC, ReactNode } from "react"
-import { SignedOut, SignInButton, SignedIn, useClerk } from "@clerk/nextjs"
+import {
+  SignedOut,
+  SignInButton,
+  SignedIn,
+  useClerk,
+  useAuth,
+} from "@clerk/nextjs"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -28,6 +34,9 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb"
 import { usePathname } from "next/navigation"
+import { deriveKeys } from "@/utils/derive"
+import { shortenAddress } from "@/utils/format"
+import { copy } from "@/utils/copy"
 
 interface Props {
   children: ReactNode
@@ -35,6 +44,10 @@ interface Props {
 
 const Dashboard: FC<Props> = ({ children }) => {
   const { signOut } = useClerk()
+  const { userId } = useAuth()
+
+  const { publicKey, privateKey } = deriveKeys(userId)
+
   const pathnames = usePathname()
     .split("/")
     .filter((pathname) => pathname !== "")
@@ -109,7 +122,9 @@ const Dashboard: FC<Props> = ({ children }) => {
                   return (
                     <>
                       <BreadcrumbItem>
-                        <BreadcrumbLink href={route === '' ? '/' : route}>{path}</BreadcrumbLink>
+                        <BreadcrumbLink href={route === "" ? "/" : route}>
+                          {path}
+                        </BreadcrumbLink>
                       </BreadcrumbItem>
                       {i < pathnames.length - 1 && <BreadcrumbSeparator />}
                     </>
@@ -127,10 +142,17 @@ const Dashboard: FC<Props> = ({ children }) => {
           </SignedOut>
           <SignedIn>
             <div className="ml-auto flex gap-2">
-              <Button className="gap-1.5 text-sm" variant="outline" size="sm">
-                <div className="inline-block mr-2 animate-pulse bg-green-500 rounded-full h-2 w-2"></div>
-                0x23...9d2e
-              </Button>
+              {publicKey && (
+                <Button
+                  className="gap-1.5 text-sm"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copy(publicKey)}
+                >
+                  <div className="inline-block mr-2 animate-pulse bg-green-500 rounded-full h-2 w-2"></div>
+                  {shortenAddress(publicKey)}
+                </Button>
+              )}
               <Button
                 variant="destructive"
                 size="sm"
@@ -143,9 +165,7 @@ const Dashboard: FC<Props> = ({ children }) => {
           </SignedIn>
         </header>
         {/* className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3" */}
-        <main className="p-4">
-          {children}
-        </main>
+        <main className="p-4">{children}</main>
       </div>
     </div>
   )

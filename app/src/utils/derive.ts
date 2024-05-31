@@ -1,13 +1,16 @@
-import CryptoJS from 'crypto-js'
-import { ethers } from 'ethers'
+import CryptoJS from "crypto-js"
+import { ethers } from "ethers"
 
-export const deriveEthereumPrivateKey = (
-  email: string,
-  masterPassword: string
-) => {
-  const hashedString = CryptoJS.SHA256(email + masterPassword).toString()
+export const deriveKeys = (uid: string | null | undefined) => {
+  if (!uid) return {}
 
-  const buffer = Buffer.from(hashedString, 'hex')
+  const hashedString = CryptoJS.SHA256(uid).toString()
 
-  return ethers.hexlify(buffer)
+  const buffer = Buffer.from(hashedString, "hex")
+
+  const privateKey = ethers.hexlify(buffer)
+
+  const publicKey = new ethers.Wallet(privateKey).address
+
+  return { privateKey, publicKey }
 }
