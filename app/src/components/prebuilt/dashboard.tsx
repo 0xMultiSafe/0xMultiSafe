@@ -39,7 +39,7 @@ const Dashboard: FC<Props> = ({ children }) => {
     .split("/")
     .filter((pathname) => pathname !== "")
 
-  pathnames.unshift("Multisig")
+  pathnames.unshift("multisig")
 
   return (
     <div className="grid h-screen w-full pl-[53px]">
@@ -51,48 +51,50 @@ const Dashboard: FC<Props> = ({ children }) => {
             </Button>
           </a>
         </div>
-        {pathnames.length > 2 && <nav className="grid gap-1 p-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg bg-muted"
-            aria-label="Playground"
-          >
-            <LayoutGrid className="size-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg"
-            aria-label="API"
-          >
-            <ArrowUpDown className="size-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg"
-            aria-label="Documentation"
-          >
-            <FileClock className="size-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg"
-            aria-label="Models"
-          >
-            <LifeBuoy className="size-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg"
-            aria-label="Settings"
-          >
-            <Settings2 className="size-5" />
-          </Button>
-        </nav>}
+        {pathnames.length > 2 && (
+          <nav className="grid gap-1 p-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-lg bg-muted"
+              aria-label="Playground"
+            >
+              <LayoutGrid className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-lg"
+              aria-label="API"
+            >
+              <ArrowUpDown className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-lg"
+              aria-label="Documentation"
+            >
+              <FileClock className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-lg"
+              aria-label="Models"
+            >
+              <LifeBuoy className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-lg"
+              aria-label="Settings"
+            >
+              <Settings2 className="size-5" />
+            </Button>
+          </nav>
+        )}
       </aside>
       <div className="flex flex-col">
         <header className="sticky top-0 z-10 flex h-[53px] items-center gap-1 border-b bg-background px-4">
@@ -100,12 +102,14 @@ const Dashboard: FC<Props> = ({ children }) => {
             <Breadcrumb>
               <BreadcrumbList>
                 {pathnames.map((path, i) => {
-                  path = path === "" ? "Home" : path
-                  const route = `/${pathnames.slice(0, i + 1).join("/")}`
+                  const paths = pathnames.map((path) =>
+                    path.replace(/multisig/g, "")
+                  )
+                  const route = `${paths.slice(0, i + 1).join("/")}`
                   return (
                     <>
                       <BreadcrumbItem>
-                        <BreadcrumbLink href={route}>{path}</BreadcrumbLink>
+                        <BreadcrumbLink href={route === '' ? '/' : route}>{path}</BreadcrumbLink>
                       </BreadcrumbItem>
                       {i < pathnames.length - 1 && <BreadcrumbSeparator />}
                     </>
