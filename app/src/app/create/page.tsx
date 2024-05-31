@@ -21,24 +21,30 @@ import { TabsContent } from "@radix-ui/react-tabs"
 import { Switch } from "@/components/ui/switch"
 
 const Create: NextPage = () => {
-  const OPTIONS: Option[] = [
-    { label: "nextjs", value: "Nextjs" },
-    { label: "React", value: "react" },
-    { label: "Remix", value: "remix" },
-    { label: "Vite", value: "vite" },
-    { label: "Nuxt", value: "nuxt" },
-    { label: "Vue", value: "vue" },
-    { label: "Svelte", value: "svelte" },
-    { label: "Angular", value: "angular" },
-    { label: "Ember", value: "ember" },
-    { label: "Gatsby", value: "gatsby" },
-    { label: "Astro", value: "astro" },
+  const CHAINS: Option[] = [
+    { label: "BNB Smart Chain Testnet", value: "bsc" },
+    { label: "Optimism Sepolia", value: "op" },
+    { label: "Linea Sepolia", value: "linea" },
+    { label: "NeonEVM Devnet", value: "neonevm" },
   ]
 
   const [threshold, setThreshold] = useState(1)
-
-  const [value, setValue] = useState<Option[]>([])
+  const [selectedChains, setSelectedChains] = useState<Option[]>([])
   const [owners, setOwners] = useState<string[]>(["", ""])
+  const [activeTab, setActiveTab] = useState<string>("single")
+
+  const deploy = async () => {
+    console.log({ owners, threshold, selectedChains, activeTab })
+
+    switch (activeTab) {
+      case "single":
+        break
+      case "multi":
+        break
+      case "vault":
+        break
+    }
+  }
 
   return (
     <SignedIn>
@@ -66,19 +72,23 @@ const Create: NextPage = () => {
                     <div className="flex w-full flex-col gap-5">
                       <MultipleSelector
                         className="z-10"
-                        value={value}
-                        onChange={setValue}
-                        defaultOptions={OPTIONS}
+                        value={selectedChains}
+                        onChange={setSelectedChains}
+                        defaultOptions={CHAINS}
                         placeholder="Select chains to deploy to..."
                         emptyIndicator={
-                          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400 w-full">
-                            no results found.
+                          <p className="text-center leading-10 w-full">
+                            no more support chains.
                           </p>
                         }
                       />
                     </div>
                   </div>
-                  <Tabs defaultValue="single">
+                  <Tabs
+                    defaultValue="single"
+                    value={activeTab}
+                    onValueChange={(e) => setActiveTab(e)}
+                  >
                     <div className="flex flex-col space-y-1.5 w-full">
                       <Label htmlFor="name">Safe Type</Label>
                       <TabsList className="grid w-full grid-cols-3">
@@ -161,7 +171,49 @@ const Create: NextPage = () => {
                         </div>
                       </div>
                     </TabsContent>
-                    <TabsContent value="vault">Vault Members</TabsContent>
+                    <TabsContent value="vault">
+                      <div className="flex flex-col space-y-1.5 w-full pt-4">
+                        <Label>Owners</Label>
+
+                        {owners.map((owner, index) => (
+                          <div
+                            key={Math.random()}
+                            className="flex items-center gap-2"
+                          >
+                            <Input
+                              placeholder="0x..."
+                              value={owner}
+                              onChange={(e) => {
+                                const newOwners = [...owners]
+                                newOwners[index] = e.target.value
+                                setOwners(newOwners)
+                              }}
+                            />
+                            {index >= 2 && (
+                              <Button
+                                onClick={() => {
+                                  const newOwners = [...owners]
+                                  newOwners.splice(index, 1)
+                                  setOwners(newOwners)
+                                }}
+                              >
+                                x
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Label
+                          className="text-xs cursor-pointer text-destructive ml-auto"
+                          onClick={() => {
+                            if (owners.length < 9) {
+                              setOwners([...owners, ""])
+                            }
+                          }}
+                        >
+                          + add a new owner
+                        </Label>
+                      </div>
+                    </TabsContent>
                   </Tabs>
                   <div className="w-full flex items-center justify-between">
                     <Label htmlFor="social-recovery">Social Recovery</Label>
@@ -171,7 +223,9 @@ const Create: NextPage = () => {
               </form>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Deploy</Button>
+              <Button className="w-full" onClick={deploy}>
+                Deploy
+              </Button>
             </CardFooter>
           </Card>
         </div>
