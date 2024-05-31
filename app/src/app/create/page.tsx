@@ -31,8 +31,12 @@ const Create: NextPage = () => {
   const [threshold, setThreshold] = useState(1)
   const [selectedChains, setSelectedChains] = useState<Option[]>([])
   const [owners, setOwners] = useState<string[]>(["", ""])
+  const [beneficiaries, setBeneficiaries] = useState<string[]>([""])
   const [activeTab, setActiveTab] = useState<string>("single")
+  const [socialRecovery, setSocialRecovery] = useState(false)
+  const [recoveryPeriod, setRecoveryPeriod] = useState(43830)
 
+  console.log(socialRecovery)
   const deploy = async () => {
     console.log({ owners, threshold, selectedChains, activeTab })
 
@@ -215,9 +219,68 @@ const Create: NextPage = () => {
                       </div>
                     </TabsContent>
                   </Tabs>
-                  <div className="w-full flex items-center justify-between">
-                    <Label htmlFor="social-recovery">Social Recovery</Label>
-                    <Switch id="social-recovery" />
+                  <div className="w-full flex flex-col items-center justify-between">
+                    <div className="flex items-center justify-between w-full">
+                      <Label htmlFor="social-recovery">Social Recovery</Label>
+                      <Switch
+                        id="social-recovery"
+                        onCheckedChange={(e) => setSocialRecovery(e)}
+                      />
+                    </div>
+                    {socialRecovery && (
+                      <div className="flex flex-col space-y-1.5 w-full p-2 m-2 border rounded-md">
+                        <div className="grid grid-flow-col items-center justify-between gap-4">
+                          <Label htmlFor="recovery-period">
+                            Recovery Period
+                          </Label>
+                          <Input
+                            id="recovery-period"
+                            type="number"
+                            placeholder="in minutes..."
+                            value={recoveryPeriod}
+                            onChange={(e) => setRecoveryPeriod(e.target.valueAsNumber)}
+                          />
+                        </div>
+                        <Label>Beneficiaries</Label>
+                        {beneficiaries.map((beneficiary, index) => (
+                          <div
+                            key={Math.random()}
+                            className="flex items-center gap-2"
+                          >
+                            <Input
+                              placeholder="0x..."
+                              value={beneficiary}
+                              onChange={(e) => {
+                                const newBeneficiaries = [...beneficiaries]
+                                newBeneficiaries[index] = e.target.value
+                                setBeneficiaries(newBeneficiaries)
+                              }}
+                            />
+                            {index >= 1 && (
+                              <Button
+                                onClick={() => {
+                                  const newBeneficiaries = [...beneficiaries]
+                                  newBeneficiaries.splice(index, 1)
+                                  setBeneficiaries(newBeneficiaries)
+                                }}
+                              >
+                                x
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Label
+                          className="text-xs cursor-pointer text-destructive flex justify-end w-full"
+                          onClick={() => {
+                            if (beneficiaries.length < 9) {
+                              setBeneficiaries([...beneficiaries, ""])
+                            }
+                          }}
+                        >
+                          + add a new beneficiary
+                        </Label>
+                      </div>
+                    )}
                   </div>
                 </div>
               </form>
