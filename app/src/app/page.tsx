@@ -1,8 +1,13 @@
-import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs"
 import { NextPage } from "next"
 
 const Home: NextPage = () => {
-  return <div>Home</div>
+  return (
+    <div className="">
+      <h1>Add all my multi-sigs here + button to create a multisig</h1>
+      <a href="/create">Create Multisig</a>
+      <a href="/0/dashboard">View Multisig</a>
+    </div>
+  )
 }
 
 export default Home
