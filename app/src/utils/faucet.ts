@@ -7,19 +7,22 @@ export const faucetDrip = async (address: string) => {
     const url = CHAIN_RPC_URL[Number(chainId) as keyof typeof CHAIN_RPC_URL]
     const provider = new ethers.JsonRpcProvider(url)
     const balance = await provider.getBalance(address)
-    console.log(`Balance on chain ${chainId} for address ${address}: ${ethers.formatEther(balance)}`)
+
     if (balance === BigInt(0)) {
-      console.log(`Dripping faucet on chain ${chainId} for address ${address}`)
-      
-      const wallet = new ethers.Wallet(env.NEXT_PUBLIC_FAUCET_PRIVATE_KEY, provider)
+      console.log(
+        `Dripping 0.001 ETH on chain ${chainId} for address ${address}`
+      )
+
+      const wallet = new ethers.Wallet(
+        env.NEXT_PUBLIC_FAUCET_PRIVATE_KEY,
+        provider
+      )
       const amount = ethers.parseEther("0.001")
 
-      const tx = {
+      const result = await wallet.sendTransaction({
         to: address,
-        value: amount
-      }
-
-      const result = await wallet.sendTransaction(tx)
+        value: amount,
+      })
       console.log(`Transaction hash: ${result.hash}`)
     }
   }
