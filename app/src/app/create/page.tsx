@@ -11,18 +11,14 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { SignedIn } from "@clerk/nextjs"
-import { ArrowBigLeft, ChevronLeft, MoveLeft } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { NextPage } from "next"
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector"
 import { useState } from "react"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TabsContent } from "@radix-ui/react-tabs"
+import { Switch } from "@/components/ui/switch"
 
 const Create: NextPage = () => {
   const OPTIONS: Option[] = [
@@ -39,7 +35,10 @@ const Create: NextPage = () => {
     { label: "Astro", value: "astro" },
   ]
 
+  const [threshold, setThreshold] = useState(1)
+
   const [value, setValue] = useState<Option[]>([])
+  const [owners, setOwners] = useState<string[]>(["", ""])
 
   return (
     <SignedIn>
@@ -62,19 +61,15 @@ const Create: NextPage = () => {
             <CardContent>
               <form>
                 <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Name of your project" />
-                  </div>
                   <div className="flex flex-col space-y-1.5 w-full">
-                    <Label htmlFor="framework">Framework</Label>
+                    <Label htmlFor="framework">Deployment Chains</Label>
                     <div className="flex w-full flex-col gap-5">
                       <MultipleSelector
-                      className="z-10"
+                        className="z-10"
                         value={value}
                         onChange={setValue}
                         defaultOptions={OPTIONS}
-                        placeholder="Select frameworks you like..."
+                        placeholder="Select chains to deploy to..."
                         emptyIndicator={
                           <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400 w-full">
                             no results found.
@@ -82,6 +77,95 @@ const Create: NextPage = () => {
                         }
                       />
                     </div>
+                  </div>
+                  <Tabs defaultValue="single">
+                    <div className="flex flex-col space-y-1.5 w-full">
+                      <Label htmlFor="name">Safe Type</Label>
+                      <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="single">Single</TabsTrigger>
+                        <TabsTrigger value="multi">Multi</TabsTrigger>
+                        <TabsTrigger value="vault">Vault</TabsTrigger>
+                      </TabsList>
+                    </div>
+                    <TabsContent value="single"></TabsContent>
+                    <TabsContent value="multi">
+                      <div className="flex flex-col space-y-1.5 w-full pt-4">
+                        <Label>Owners</Label>
+
+                        {owners.map((owner, index) => (
+                          <div
+                            key={Math.random()}
+                            className="flex items-center gap-2"
+                          >
+                            <Input
+                              placeholder="0x..."
+                              value={owner}
+                              onChange={(e) => {
+                                const newOwners = [...owners]
+                                newOwners[index] = e.target.value
+                                setOwners(newOwners)
+                              }}
+                            />
+                            {index >= 2 && (
+                              <Button
+                                onClick={() => {
+                                  const newOwners = [...owners]
+                                  newOwners.splice(index, 1)
+                                  setOwners(newOwners)
+                                }}
+                              >
+                                x
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Label
+                          className="text-xs cursor-pointer text-destructive ml-auto"
+                          onClick={() => {
+                            if (owners.length < 9) {
+                              setOwners([...owners, ""])
+                            }
+                          }}
+                        >
+                          + add a new owner
+                        </Label>
+                      </div>
+                      <div className="w-full grid grid-flow-col gap-6 items-center pt-4">
+                        <Label htmlFor="treshold-signatures">
+                          Threshold Signatures
+                        </Label>
+                        <div className="flex flex-row items-center justify-end gap-2 w-full">
+                          <Input
+                            id="treshold-signatures"
+                            className="w-9"
+                            type="number"
+                            value={threshold}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (
+                                value === "" ||
+                                (parseInt(value) > 0 &&
+                                  parseInt(value) <= owners.length)
+                              ) {
+                                setThreshold(parseInt(value))
+                              }
+                            }}
+                          />
+                          <span>/</span>
+                          <Input
+                            id="treshold-signatures"
+                            className="w-9"
+                            value={owners.length}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="vault">Vault Members</TabsContent>
+                  </Tabs>
+                  <div className="w-full flex items-center justify-between">
+                    <Label htmlFor="social-recovery">Social Recovery</Label>
+                    <Switch id="social-recovery" />
                   </div>
                 </div>
               </form>
