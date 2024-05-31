@@ -37,7 +37,7 @@ const Home: NextPage = () => {
           <a href="/create">
             <Button>Create Multisig</Button>
           </a>
-          <a href="/0/dashboard">
+          <a href="">
             <Button variant="outline">Import Multisig</Button>
           </a>
         </div>

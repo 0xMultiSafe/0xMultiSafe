@@ -38,6 +38,7 @@ import { deriveKeys } from "@/utils/derive"
 import { shortenAddress } from "@/utils/format"
 import { copy } from "@/utils/copy"
 import { faucetDrip } from "@/utils/faucet"
+import { cn } from "@/lib/utils"
 
 interface Props {
   children: ReactNode
@@ -73,46 +74,66 @@ const Dashboard: FC<Props> = ({ children }) => {
         </div>
         {pathnames.length > 2 && (
           <nav className="grid gap-1 p-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg bg-muted"
-              aria-label="Playground"
-            >
-              <LayoutGrid className="size-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg"
-              aria-label="API"
-            >
-              <ArrowUpDown className="size-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg"
-              aria-label="Documentation"
-            >
-              <FileClock className="size-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg"
-              aria-label="Models"
-            >
-              <LifeBuoy className="size-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg"
-              aria-label="Settings"
-            >
-              <Settings2 className="size-5" />
-            </Button>
+            <a href={`/${pathnames[1]}/dashboard`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(`rounded-lg`, {
+                  [`bg-muted`]: pathnames[2] === "dashboard",
+                })}
+                aria-label="dashboard"
+              >
+                <LayoutGrid className="size-5" />
+              </Button>
+            </a>
+            <a href={`/${pathnames[1]}/transaction`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(`rounded-lg`, {
+                  [`bg-muted`]: pathnames[2] === "transaction",
+                })}
+                aria-label="transaction"
+              >
+                <ArrowUpDown className="size-5" />
+              </Button>
+            </a>
+            <a href={`/${pathnames[1]}/pending`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(`rounded-lg`, {
+                  [`bg-muted`]: pathnames[2] === "pending",
+                })}
+                aria-label="pending"
+              >
+                <FileClock className="size-5" />
+              </Button>
+            </a>
+            <a href={`/${pathnames[1]}/recover`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(`rounded-lg`, {
+                  [`bg-muted`]: pathnames[2] === "recover",
+                })}
+                aria-label="recover"
+              >
+                <LifeBuoy className="size-5" />
+              </Button>
+            </a>
+            <a href={`/${pathnames[1]}/settings`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(`rounded-lg`, {
+                  [`bg-muted`]: pathnames[2] === "settings",
+                })}
+                aria-label="settings"
+              >
+                <Settings2 className="size-5" />
+              </Button>
+            </a>
           </nav>
         )}
       </aside>
