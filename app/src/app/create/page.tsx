@@ -36,7 +36,6 @@ const Create: NextPage = () => {
   const [socialRecovery, setSocialRecovery] = useState(false)
   const [recoveryPeriod, setRecoveryPeriod] = useState(43830)
 
-  console.log(socialRecovery)
   const deploy = async () => {
     console.log({ owners, threshold, selectedChains, activeTab })
 

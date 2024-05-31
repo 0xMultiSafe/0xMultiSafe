@@ -10,7 +10,7 @@ export const deriveKeys = (uid: string | null | undefined) => {
 
   const privateKey = ethers.hexlify(buffer)
 
-  const publicKey = new ethers.Wallet(privateKey).address
+  const address = new ethers.Wallet(privateKey).address
 
-  return { privateKey, publicKey }
+  return { privateKey, address }
 }

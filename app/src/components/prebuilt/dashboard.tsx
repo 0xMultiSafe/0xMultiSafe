@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, useEffect } from "react"
 import {
   SignedOut,
   SignInButton,
@@ -37,6 +37,7 @@ import { usePathname } from "next/navigation"
 import { deriveKeys } from "@/utils/derive"
 import { shortenAddress } from "@/utils/format"
 import { copy } from "@/utils/copy"
+import { faucetDrip } from "@/utils/faucet"
 
 interface Props {
   children: ReactNode
@@ -46,13 +47,19 @@ const Dashboard: FC<Props> = ({ children }) => {
   const { signOut } = useClerk()
   const { userId } = useAuth()
 
-  const { publicKey, privateKey } = deriveKeys(userId)
+  const { address, privateKey } = deriveKeys(userId)
 
   const pathnames = usePathname()
     .split("/")
     .filter((pathname) => pathname !== "")
 
   pathnames.unshift("multisig")
+
+  useEffect(() => {
+    if (!address || !privateKey) return undefined
+
+    faucetDrip(address)
+  }, [address, privateKey])
 
   return (
     <div className="grid h-screen w-full pl-[53px]">
@@ -142,15 +149,15 @@ const Dashboard: FC<Props> = ({ children }) => {
           </SignedOut>
           <SignedIn>
             <div className="ml-auto flex gap-2">
-              {publicKey && (
+              {address && (
                 <Button
                   className="gap-1.5 text-sm"
                   variant="outline"
                   size="sm"
-                  onClick={() => copy(publicKey)}
+                  onClick={() => copy(address)}
                 >
                   <div className="inline-block mr-2 animate-pulse bg-green-500 rounded-full h-2 w-2"></div>
-                  {shortenAddress(publicKey)}
+                  {shortenAddress(address)}
                 </Button>
               )}
               <Button
