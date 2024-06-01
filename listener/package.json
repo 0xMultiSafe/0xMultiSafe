@@ -1,0 +1,24 @@
+{
+  "name": "listener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "listen": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.13.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@neonevm/token-transfer": "^3.0.1",
+    "bs58": "^5.0.0",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
+    "react": "^18.3.1",
+    "web3": "^1.10.0"
+  }
+}
