@@ -45,7 +45,7 @@ const Home: NextPage = () => {
       {deployedAddresses ? (
         Object.keys(deployedAddresses).map((address) => (
           <a
-            href={`/${address}/dashboard`}
+            href={`/${address}/transaction`}
             className="w-full p-4 bg-secondary text-secondary-foreground rounded-lg cursor-pointer flex items-center gap-4"
           >
             <div className="flex items-center">
