@@ -46,6 +46,9 @@ export const retrieveMultisig = async (
 
     const multisigContract = new ethers.Contract(multisig, MULTISIG_ABI, wallet)
 
+    // Check if the contract exists at the multisig address
+    if ((await provider.getCode(multisig)) === "0x") return
+
     const transactionCount = await multisigContract.getTransactionCount()
 
     if (transactionCount === 0) return
