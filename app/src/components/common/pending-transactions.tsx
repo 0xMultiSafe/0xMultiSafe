@@ -9,6 +9,7 @@ import { Button } from "../ui/button"
 import { confirmTransaction } from "@/utils/send"
 import Image from "next/image"
 import { TOKEN_ADDRESS_TO_NAME } from "@/constants"
+import { toast } from "sonner"
 
 interface Props {
   multisig: string
@@ -23,7 +24,7 @@ const PendingTransactions: FC<Props> = ({ multisig }) => {
   }>()
 
   useEffect(() => {
-    ;(async () => {
+    const fetchMultisigs = async () => {
       if (!privateKey || !multisig || !address) return undefined
 
       const retrievedMultisigs = await retrieveMultisig(
@@ -32,8 +33,14 @@ const PendingTransactions: FC<Props> = ({ multisig }) => {
         multisig
       )
       setMultisigs(retrievedMultisigs)
-    })()
-  }, [privateKey, multisig])
+    }
+
+    fetchMultisigs()
+
+    const interval = setInterval(fetchMultisigs, 5000)
+
+    return () => clearInterval(interval)
+  }, [privateKey, multisig, address])
 
   const confirm = async (transactionId: number, chainId: string) => {
     if (!privateKey || !multisig)
@@ -56,8 +63,13 @@ const PendingTransactions: FC<Props> = ({ multisig }) => {
 
               if ((tx as any)[4]) return undefined
 
-              const token = TOKEN_ADDRESS_TO_NAME[(tx as any)[1].toLowerCase() as keyof typeof TOKEN_ADDRESS_TO_NAME] || (tx as any)[1];
-              
+              const token =
+                TOKEN_ADDRESS_TO_NAME[
+                  (
+                    tx as any
+                  )[1].toLowerCase() as keyof typeof TOKEN_ADDRESS_TO_NAME
+                ] || (tx as any)[1]
+
               return (
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-4">
@@ -90,7 +102,16 @@ const PendingTransactions: FC<Props> = ({ multisig }) => {
                       >
                         Confirm
                       </Button>
-                      <Button variant={"destructive"}>Reject</Button>
+                      <Button
+                        variant={"destructive"}
+                        onClick={() =>
+                          toast.error(
+                            "The reject function is currently unavailable!"
+                          )
+                        }
+                      >
+                        Reject
+                      </Button>
                     </div>
                   )}
                 </div>

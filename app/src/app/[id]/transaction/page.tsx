@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { TOKEN_ADDRESS } from "@/constants"
 import { deriveKeys } from "@/utils/derive"
 import { submitTransaction } from "@/utils/send"
 import { useAuth } from "@clerk/nextjs"
@@ -29,19 +30,32 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
 
   const { address, privateKey } = deriveKeys(userId)
 
-
-  const [token, setToken] = useState('');
-  const [srcChain, setSrcChain] = useState('');
-  const [amount, setAmount] = useState<number>();
-  const [dstChain, setDstChain] = useState('');
-  const [recipientAddress, setRecipientAddress] = useState('');
+  const [token, setToken] = useState("")
+  const [srcChain, setSrcChain] = useState("")
+  const [amount, setAmount] = useState<number>()
+  const [dstChain, setDstChain] = useState("")
+  const [recipientAddress, setRecipientAddress] = useState("")
 
   const sendTransaction = async () => {
-    if (!privateKey) return
-    console.log('Sending transaction...')
-    console.log({ token, srcChain, amount, dstChain, recipientAddress })
+    if (!privateKey || !amount) return
 
-    const tx = await submitTransaction(srcChain, privateKey, params.id)
+    // TODO: SORT IT OUT WITH CCIP & CLEAR FIELDS WHEN TX COMPLETED SUCCESSFULLY
+    const tx = await submitTransaction(
+      privateKey,
+      params.id,
+      srcChain,
+      recipientAddress,
+      token,
+      amount.toString()
+    )
+
+    if (tx) {
+      setToken("")
+      setSrcChain("")
+      setAmount(undefined)
+      setDstChain("")
+      setRecipientAddress("")
+    }
   }
 
   return (
@@ -62,8 +76,8 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="usdc">USDC</SelectItem>
-                    <SelectItem value="usdt">USDT</SelectItem>
+                    <SelectItem value={TOKEN_ADDRESS}>USDC</SelectItem>
+                    <SelectItem value={"todo"}>USDT</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

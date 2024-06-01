@@ -1,30 +1,46 @@
 import { CHAIN_RPC_URL } from "@/constants"
 import { MULTISIG_ABI } from "@/constants/abi"
 import { ethers } from "ethers"
+import { toast } from "sonner"
 
-// TODO: Implement submitTransaction function
 export const submitTransaction = async (
-  srcChain: string,
   privateKey: string,
-  multisig: string
+  multisig: string,
+  srcChain: string,
+  to: string,
+  token: string,
+  value: string,
+  linkToken?: string,
+  destinationChainSelector?: number,
+  ccipRouter?: string
 ) => {
-  const url = CHAIN_RPC_URL[Number(srcChain) as keyof typeof CHAIN_RPC_URL]
-  console.log(url, multisig)
-  const provider = new ethers.JsonRpcProvider(url)
-  const wallet = new ethers.Wallet(privateKey, provider)
-  const multisigContract = new ethers.Contract(multisig, MULTISIG_ABI, wallet)
-  console.log(multisigContract)
-  const tx = await multisigContract.submitTransaction(
-    "0x1e839e79DF349cd220bBBCED6f9EC2351f5ECB17", // to
-    "0x3c936d1f6fed29ebb38d6b77d53af2ef68002258", // token
-    ethers.parseEther("10"), // value
-    "0x", // data
-    "0x0000000000000000000000000000000000000000", // linkToken
-    0, // destinationChainSelector
-    "0x0000000000000000000000000000000000000000" // ccipRouter
-  )
+  try {
+    const url = CHAIN_RPC_URL[Number(srcChain) as keyof typeof CHAIN_RPC_URL]
+    const provider = new ethers.JsonRpcProvider(url)
+    const wallet = new ethers.Wallet(privateKey, provider)
+    const multisigContract = new ethers.Contract(multisig, MULTISIG_ABI, wallet)
+    const { tx } = await multisigContract.submitTransaction(
+      to, // to
+      token, // token
+      ethers.parseEther(value), // value
+      "0x", // data
+      linkToken ?? "0x0000000000000000000000000000000000000000", // linkToken
+      destinationChainSelector ?? 0, // destinationChainSelector
+      ccipRouter ?? "0x0000000000000000000000000000000000000000" // ccipRouter
+    )
 
-  console.log(tx)
+    toast.success("✨ Transaction submitted successfully!✨", {
+      description: "View it in the pending transactions page.",
+    })
+
+    return tx as string
+  } catch (e) {
+    console.error(e)
+    toast.error("❌ Failed to submit your transaction ❌", {
+      description: "Please try again or contact me if the issue persists.",
+    })
+    return undefined
+  }
 }
 
 export const confirmTransaction = async (
@@ -33,10 +49,22 @@ export const confirmTransaction = async (
   transactionId: number,
   chainId: string
 ) => {
-  const url = CHAIN_RPC_URL[Number(chainId) as keyof typeof CHAIN_RPC_URL]
-  const provider = new ethers.JsonRpcProvider(url)
-  const wallet = new ethers.Wallet(privateKey, provider)
-  const multisigContract = new ethers.Contract(multisig, MULTISIG_ABI, wallet)
-  const tx = await multisigContract.confirmTransaction(transactionId)
-  console.log(tx)
+  try {
+    const url = CHAIN_RPC_URL[Number(chainId) as keyof typeof CHAIN_RPC_URL]
+    const provider = new ethers.JsonRpcProvider(url)
+    const wallet = new ethers.Wallet(privateKey, provider)
+    const multisigContract = new ethers.Contract(multisig, MULTISIG_ABI, wallet)
+    const tx = await multisigContract.confirmTransaction(transactionId)
+
+    toast.success("✨ Transaction confirmed successfully!✨", {
+      description: "Check your recipient address for the funds.",
+    })
+
+    return tx as string
+  } catch (e) {
+    console.error(e)
+    toast.error("❌ Failed to confirm your transaction ❌", {
+      description: "Please try again or contact me if the issue persists.",
+    })
+  }
 }
