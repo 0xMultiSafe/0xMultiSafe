@@ -15,7 +15,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -29,7 +28,7 @@ import { toast } from "sonner"
 const TransactionPage = ({ params }: { params: { id: string } }) => {
   const { userId } = useAuth()
 
-  const { address, privateKey } = deriveKeys(userId)
+  const { privateKey } = deriveKeys(userId)
 
   const [token, setToken] = useState("")
   const [srcChain, setSrcChain] = useState("")
@@ -39,10 +38,6 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
 
   const sendTransaction = async () => {
     if (!privateKey || !amount) return
-
-    // const selector = BigInt("16015286601757825753")
-    // const linkToken = "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06"
-    // const router = "0xE1053aE1857476f36A3C62580FF9b016E8EE8F6f"
 
     let tx: string | undefined
 
