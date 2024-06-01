@@ -263,11 +263,11 @@ contract Multisig {
         _linkToken.approve(address(ccipRouter), ccipFee);
 
         // TODO: LOGIC TO TRANSFER FROM THIS CONTRACT INSTEAD OF MSG.SENDER
-        if (_amount > _token.balanceOf(msg.sender))
-            revert NotEnoughBalanceUsdcForTransfer(
-                _token.balanceOf(msg.sender)
-            );
-        _token.transferFrom(msg.sender, address(this), _amount);
+        // if (_amount > _token.balanceOf(msg.sender))
+        //     revert NotEnoughBalanceUsdcForTransfer(
+        //         _token.balanceOf(msg.sender)
+        //     );
+        // _token.transferFrom(msg.sender, address(this), _amount);
         _token.approve(address(ccipRouter), _amount);
 
         // Send CCIP Message

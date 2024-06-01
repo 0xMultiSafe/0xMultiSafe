@@ -16,6 +16,75 @@ export const MULTISIG_ABI = [
     type: "constructor",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "currentBalance",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "calculatedFees",
+        type: "uint256",
+      },
+    ],
+    name: "NotEnoughBalanceForFees",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "currentBalance",
+        type: "uint256",
+      },
+    ],
+    name: "NotEnoughBalanceUsdcForTransfer",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NothingToWithdraw",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "messageId",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "destinationChainSelector",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "ccipFee",
+        type: "uint256",
+      },
+    ],
+    name: "CCIPTransferred",
+    type: "event",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -197,7 +266,7 @@ export const MULTISIG_ABI = [
         type: "address",
       },
       {
-        internalType: "address",
+        internalType: "contract IERC20",
         name: "token",
         type: "address",
       },
@@ -220,6 +289,21 @@ export const MULTISIG_ABI = [
         internalType: "uint256",
         name: "numConfirmations",
         type: "uint256",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "linkToken",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "destinationChainSelector",
+        type: "uint64",
+      },
+      {
+        internalType: "address",
+        name: "ccipRouter",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -341,7 +425,7 @@ export const MULTISIG_ABI = [
         type: "address",
       },
       {
-        internalType: "address",
+        internalType: "contract IERC20",
         name: "_token",
         type: "address",
       },
@@ -354,6 +438,21 @@ export const MULTISIG_ABI = [
         internalType: "bytes",
         name: "_data",
         type: "bytes",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_linkToken",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "_destinationChainSelector",
+        type: "uint64",
+      },
+      {
+        internalType: "address",
+        name: "_ccipRouter",
+        type: "address",
       },
     ],
     name: "submitTransaction",
@@ -390,7 +489,7 @@ export const MULTISIG_ABI = [
         type: "address",
       },
       {
-        internalType: "address",
+        internalType: "contract IERC20",
         name: "token",
         type: "address",
       },
@@ -414,8 +513,67 @@ export const MULTISIG_ABI = [
         name: "confirmations",
         type: "uint256",
       },
+      {
+        internalType: "contract IERC20",
+        name: "linkToken",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "destinationChainSelector",
+        type: "uint64",
+      },
+      {
+        internalType: "address",
+        name: "ccipRouter",
+        type: "address",
+      },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_token",
+        type: "address",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_linkToken",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "_destinationChainSelector",
+        type: "uint64",
+      },
+      {
+        internalType: "address",
+        name: "_ccipRouter",
+        type: "address",
+      },
+    ],
+    name: "transferCCIP",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "messageId",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

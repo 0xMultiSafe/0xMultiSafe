@@ -19,3 +19,14 @@
 ····································|·············|··············|·············|··············|··············
 |  Token                            ·          -  ·           -  ·     964012  ·      14.3 %  ·          -  │
 ·-----------------------------------|-------------|--------------|-------------|--------------|-------------·
+
+## Deployments
+
+```
+hh deploy --network sepolia # 0.007232837200520256
+hh deploy --network linea_sepolia # 0.000932066991529404
+hh deploy --network optimism_sepolia # 0.045860773792959276
+hh deploy --network neon_devnet # 33.90960587636594
+hh deploy --network bsc_testnet # unknown
+hh deploy --network fiji # 0.0983476
+```

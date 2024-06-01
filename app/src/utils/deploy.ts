@@ -21,6 +21,7 @@ export const deployMultisig = async (
     const bytecode = await create2DeployerContract.getBytecode(owners, required)
     console.log("Bytecode:", bytecode)
 
+    // TODO: DETERMINISTIC SALT
     const tx = await create2DeployerContract.deployUsingCreate2(bytecode, "123")
 
     console.log("Transaction:", tx)

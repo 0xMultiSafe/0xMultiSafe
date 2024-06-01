@@ -17,8 +17,20 @@ export const retrieveMultisigs = async (privateKey: string) => {
       wallet
     )
 
-    const deployMultisigs = await create2DeployerContract.getDeployedAddresses()
+    const code = await provider.getCode(CREATE2_DEPLOYER_ADDRESS)
+    if (code === "0x") {
+      console.error(`No contract found at ${create2DeployerContract.address}`)
+      return
+    }
 
+    try {
+      await create2DeployerContract.getDeployedAddresses()
+    } catch (error) {
+      console.error("Contract does not have the getDeployedAddresses function")
+      return
+    }
+
+    const deployMultisigs = await create2DeployerContract.getDeployedAddresses()
     multisigChains[chainId] = deployMultisigs
 
     // Add each address to the corresponding chains

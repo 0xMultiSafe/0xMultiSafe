@@ -44,6 +44,10 @@ const config: HardhatUserConfig = {
       url: process.env.BSC_TESTNET_RPC_URL || "https://bsc-testnet-rpc.publicnode.com",
       accounts,
     },
+    fiji: {
+      url: process.env.FIJI_RPC_URL || "https://rpc.ankr.com/avalanche_fuji",
+      accounts,
+    },
   },
   etherscan: {
     apiKey: "YOUR_ETHERSCAN_API_KEY",

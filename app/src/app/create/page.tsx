@@ -28,7 +28,9 @@ const Create: NextPage = () => {
 
   const CHAINS: Option[] = [
     { label: "BNB Smart Chain Testnet", value: "97" },
+    { label: "Avalanche Fiji", value: "43113" },
     { label: "Linea Sepolia", value: "59141" },
+    { label: "Sepolia", value: "11155111" },
     { label: "Optimism Sepolia", value: "11155420" },
     { label: "NeonEVM Devnet", value: "245022926" },
   ]

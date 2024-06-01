@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,8 +19,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useState } from "react"
 
 const TransactionPage = ({ params }: { params: { id: string } }) => {
+  const [token, setToken] = useState('');
+  const [srcChain, setSrcChain] = useState('');
+  const [amount, setAmount] = useState<number>();
+  const [dstChain, setDstChain] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
+
+  const sendTransaction = () => {
+    console.log('Sending transaction...')
+    console.log({ token, srcChain, amount, dstChain, recipientAddress })
+  }
+
   return (
     <div className="flex items-center justify-center">
       <div className="w-full max-w-96 mt-12">
@@ -31,34 +45,30 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex gap-4 w-full">
-              <Select>
+              <Select onValueChange={(e) => setToken(e)}>
                 <SelectTrigger className="">
-                  <SelectValue placeholder="Select a fruit" />
+                  <SelectValue placeholder="Select a token..." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Fruits</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
+                    <SelectItem value="usdc">USDC</SelectItem>
+                    <SelectItem value="usdt">USDT</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
 
-              <Select>
+              <Select onValueChange={(e) => setSrcChain(e)}>
                 <SelectTrigger className="">
-                  <SelectValue placeholder="Select a fruit" />
+                  <SelectValue placeholder="Select src chain..." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Fruits</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
+                    <SelectItem value="97">BNB Smart Chain Testnet</SelectItem>
+                    <SelectItem value="43113">Avalanche Fiji</SelectItem>
+                    <SelectItem value="59141">Linea Sepolia</SelectItem>
+                    <SelectItem value="11155111">Sepolia</SelectItem>
+                    <SelectItem value="11155420">Optimism Sepolia</SelectItem>
+                    <SelectItem value="245022926">NeonEVM Devnet</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -69,23 +79,25 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
               <Input
                 type="number"
                 className="input"
-                placeholder="Enter the amount"
-              />  
+                placeholder="Enter an amount..."
+                value={amount}
+                onChange={(e) => setAmount(e.target.valueAsNumber)}
+              />
             </div>
             <div className="flex flex-col space-y-1.5 w-full pt-2">
               <Label>Destination Chain</Label>
-              <Select>
+              <Select onValueChange={(e) => setDstChain(e)}>
                 <SelectTrigger className="">
-                  <SelectValue placeholder="Select a fruit" />
+                  <SelectValue placeholder="Select a destination chain..." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Fruits</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
+                    <SelectItem value="97">BNB Smart Chain Testnet</SelectItem>
+                    <SelectItem value="43113">Avalanche Fiji</SelectItem>
+                    <SelectItem value="59141">Linea Sepolia</SelectItem>
+                    <SelectItem value="11155111">Sepolia</SelectItem>
+                    <SelectItem value="11155420">Optimism Sepolia</SelectItem>
+                    <SelectItem value="245022926">NeonEVM Devnet</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -96,13 +108,13 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
               <Input
                 type="text"
                 className="input"
-                placeholder="Enter the amount"
-              />  
+                placeholder="Enter a recipient address..."
+                value={recipientAddress}
+                onChange={(e) => setRecipientAddress(e.target.value)}
+              />
             </div>
 
-            <Button>
-              Send Transaction
-            </Button>
+            <Button onClick={sendTransaction}>Send Transaction</Button>
           </CardContent>
         </Card>
       </div>
