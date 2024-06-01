@@ -46,7 +46,7 @@ const PendingTransactions: FC<Props> = ({ multisig }) => {
             return txs.map((tx) => {
               const required = Number((tx as { required: string }).required)
               const isConfirmed = (tx as { isConfirmed: boolean }).isConfirmed
-              console.log(tx)
+
               return (
                 <div className="flex items-center gap-4">
                   <div className="grid gap-1">
