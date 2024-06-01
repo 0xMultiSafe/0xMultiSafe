@@ -39,6 +39,10 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
   const sendTransaction = async () => {
     if (!privateKey || !amount) return
 
+    const selector = BigInt('16015286601757825753')
+    const linkToken = '0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06'
+    const router = '0xE1053aE1857476f36A3C62580FF9b016E8EE8F6f'
+    
     // TODO: SORT IT OUT WITH CCIP & CLEAR FIELDS WHEN TX COMPLETED SUCCESSFULLY
     const tx = await submitTransaction(
       privateKey,
@@ -46,7 +50,10 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
       srcChain,
       recipientAddress,
       token,
-      amount.toString()
+      amount.toString(),
+      linkToken,
+      selector,
+      router
     )
 
     if (tx) {
@@ -77,7 +84,7 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value={TOKEN_ADDRESS}>USDC</SelectItem>
-                    <SelectItem value={"todo"}>USDT</SelectItem>
+                    <SelectItem value={"0xbFA2ACd33ED6EEc0ed3Cc06bF1ac38d22b36B9e9"}>CCIP</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

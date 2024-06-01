@@ -11,7 +11,7 @@ export const submitTransaction = async (
   token: string,
   value: string,
   linkToken?: string,
-  destinationChainSelector?: number,
+  destinationChainSelector?: bigint,
   ccipRouter?: string
 ) => {
   try {
