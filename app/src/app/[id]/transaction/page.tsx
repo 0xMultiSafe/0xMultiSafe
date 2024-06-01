@@ -19,11 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { TOKEN_ADDRESS } from "@/constants"
+import { CCIP_ROUTE_META, CHAIN_SELECTOR, TOKEN_ADDRESS } from "@/constants"
 import { deriveKeys } from "@/utils/derive"
 import { submitTransaction } from "@/utils/send"
 import { useAuth } from "@clerk/nextjs"
 import { useState } from "react"
+import { toast } from "sonner"
 
 const TransactionPage = ({ params }: { params: { id: string } }) => {
   const { userId } = useAuth()
@@ -39,22 +40,46 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
   const sendTransaction = async () => {
     if (!privateKey || !amount) return
 
-    const selector = BigInt('16015286601757825753')
-    const linkToken = '0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06'
-    const router = '0xE1053aE1857476f36A3C62580FF9b016E8EE8F6f'
-    
-    // TODO: SORT IT OUT WITH CCIP & CLEAR FIELDS WHEN TX COMPLETED SUCCESSFULLY
-    const tx = await submitTransaction(
-      privateKey,
-      params.id,
-      srcChain,
-      recipientAddress,
-      token,
-      amount.toString(),
-      linkToken,
-      selector,
-      router
-    )
+    // const selector = BigInt("16015286601757825753")
+    // const linkToken = "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06"
+    // const router = "0xE1053aE1857476f36A3C62580FF9b016E8EE8F6f"
+
+    let tx: string | undefined
+
+    if (srcChain === dstChain)
+      tx = await submitTransaction(
+        privateKey,
+        params.id,
+        srcChain,
+        recipientAddress,
+        token,
+        amount.toString()
+      )
+    else {
+      const chainSelector =
+        CHAIN_SELECTOR[Number(dstChain) as keyof typeof CHAIN_SELECTOR]
+
+      if (!chainSelector)
+        return toast.error("❌ Destination chain not supported ❌", {
+          description:
+            "Please select a different destination chain to use CCIP.",
+        })
+
+      const { linkToken, router } =
+        CCIP_ROUTE_META[Number(srcChain) as keyof typeof CCIP_ROUTE_META]
+
+      tx = await submitTransaction(
+        privateKey,
+        params.id,
+        srcChain,
+        recipientAddress,
+        token,
+        amount.toString(),
+        linkToken,
+        BigInt(chainSelector),
+        router
+      )
+    }
 
     if (tx) {
       setToken("")
@@ -84,7 +109,11 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value={TOKEN_ADDRESS}>USDC</SelectItem>
-                    <SelectItem value={"0xbFA2ACd33ED6EEc0ed3Cc06bF1ac38d22b36B9e9"}>CCIP</SelectItem>
+                    <SelectItem
+                      value={"0xbFA2ACd33ED6EEc0ed3Cc06bF1ac38d22b36B9e9"}
+                    >
+                      CCIP
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

@@ -160,6 +160,7 @@ contract Multisig {
                 txn.ccipRouter != address(0)
             ) {
                 transferCCIP(
+                    _transactionId,
                     txn.to,
                     txn.value,
                     IERC20(txn.token),
@@ -226,6 +227,7 @@ contract Multisig {
     }
 
     function transferCCIP(
+        uint _transactionId,
         address _receiver,
         uint256 _amount,
         IERC20 _token,
@@ -272,6 +274,9 @@ contract Multisig {
 
         // Send CCIP Message
         messageId = ccipRouter.ccipSend(_destinationChainSelector, message);
+
+        Transaction storage txn = transactions[_transactionId];
+        txn.executed = true;
 
         emit CCIPTransferred(
             messageId,
