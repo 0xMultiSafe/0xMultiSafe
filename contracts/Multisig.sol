@@ -107,11 +107,6 @@ contract Multisig {
         emit Deposit(msg.sender, msg.value);
     }
 
-    // TODO: Implement the following functions
-    function submitAndConfirmTransaction() public onlyOwner {}
-
-    function executeSplitTransaction() public onlyOwner {}
-
     // Submit a transaction
     function submitTransaction(
         address _to,
@@ -264,12 +259,6 @@ contract Multisig {
             );
         _linkToken.approve(address(ccipRouter), ccipFee);
 
-        // TODO: LOGIC TO TRANSFER FROM THIS CONTRACT INSTEAD OF MSG.SENDER
-        // if (_amount > _token.balanceOf(msg.sender))
-        //     revert NotEnoughBalanceUsdcForTransfer(
-        //         _token.balanceOf(msg.sender)
-        //     );
-        // _token.transferFrom(msg.sender, address(this), _amount);
         _token.approve(address(ccipRouter), _amount);
 
         // Send CCIP Message
