@@ -3,9 +3,20 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import { IRouterClient } from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
+import { Client } from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
+import { SafeERC20 } from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+
 // import "hardhat/console.sol";
 
 contract Multisig {
+    error NotEnoughBalanceForFees(
+        uint256 currentBalance,
+        uint256 calculatedFees
+    );
+    error NotEnoughBalanceUsdcForTransfer(uint256 currentBalance);
+    error NothingToWithdraw();
+
     address[] public owners;
     uint public required;
     uint public transactionCount;
@@ -33,6 +44,13 @@ contract Multisig {
     event TransactionExecuted(uint indexed transactionId);
     event TransactionExecutionFailed(uint indexed transactionId);
     event RevokeConfirmation(address indexed owner, uint indexed transactionId);
+    event CCIPTransferred(
+        bytes32 messageId,
+        uint64 destinationChainSelector,
+        address receiver,
+        uint256 amount,
+        uint256 ccipFee
+    );
 
     modifier onlyOwner() {
         require(isOwner[msg.sender], "Not owner");
@@ -182,6 +200,60 @@ contract Multisig {
         confirmations[_transactionId][msg.sender] = false;
 
         emit RevokeConfirmation(msg.sender, _transactionId);
+    }
+
+    function transferCCIP(
+        address _receiver,
+        uint256 _amount,
+        IERC20 _token,
+        IERC20 _linkToken,
+        uint64 _destinationChainSelector,
+        address _ccipRouter
+    ) external returns (bytes32 messageId) {
+        IRouterClient ccipRouter = IRouterClient(_ccipRouter);
+
+        Client.EVMTokenAmount[]
+            memory tokenAmounts = new Client.EVMTokenAmount[](1);
+        Client.EVMTokenAmount memory tokenAmount = Client.EVMTokenAmount({
+            token: address(_token),
+            amount: _amount
+        });
+        tokenAmounts[0] = tokenAmount;
+
+        Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
+            receiver: abi.encode(_receiver),
+            data: "",
+            tokenAmounts: tokenAmounts,
+            extraArgs: Client._argsToBytes(
+                Client.EVMExtraArgsV1({ gasLimit: 0 })
+            ),
+            feeToken: address(_linkToken)
+        });
+
+        uint256 ccipFee = ccipRouter.getFee(_destinationChainSelector, message);
+
+        if (ccipFee > _linkToken.balanceOf(address(this)))
+            revert NotEnoughBalanceForFees(
+                _linkToken.balanceOf(address(this)),
+                ccipFee
+            );
+        _linkToken.approve(address(ccipRouter), ccipFee);
+
+        if (_amount > _token.balanceOf(msg.sender))
+            revert NotEnoughBalanceUsdcForTransfer(_token.balanceOf(msg.sender));
+        _token.transferFrom(msg.sender, address(this), _amount);
+        _token.approve(address(ccipRouter), _amount);
+
+        // Send CCIP Message
+        messageId = ccipRouter.ccipSend(_destinationChainSelector, message);
+
+        emit CCIPTransferred(
+            messageId,
+            _destinationChainSelector,
+            _receiver,
+            _amount,
+            ccipFee
+        );
     }
 
     function getOwners() public view returns (address[] memory) {
