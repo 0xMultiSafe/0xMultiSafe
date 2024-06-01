@@ -49,8 +49,11 @@ export const retrieveMultisigs = async (privateKey: string) => {
 
 export const retrieveMultisig = async (
   privateKey: string,
+  address: string,
   multisig: string
 ) => {
+  const multisigs: { [key: string]: object[] } = {}
+
   const promises = Object.keys(CHAIN_RPC_URL).map(async (chainId) => {
     const url = CHAIN_RPC_URL[Number(chainId) as keyof typeof CHAIN_RPC_URL]
     const provider = new ethers.JsonRpcProvider(url)
@@ -65,8 +68,20 @@ export const retrieveMultisig = async (
 
     if (transactionCount === 0) return
 
-    console.log(transactionCount)
+    for (let i = 0; i < transactionCount; i++) {
+      const transaction = await multisigContract.getTransaction(i)
+      const owners = await multisigContract.getOwners()
+      const required = await multisigContract.required()
+      const isConfirmed = await multisigContract.isConfirmed(0, address)
+
+      if (!multisigs[chainId]) {
+        multisigs[chainId] = []
+      }
+      multisigs[chainId].push({ ...transaction, owners, required, isConfirmed, i, chainId })
+    }
   })
 
   await Promise.all(promises)
+
+  return multisigs
 }

@@ -19,18 +19,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { deriveKeys } from "@/utils/derive"
+import { submitTransaction } from "@/utils/send"
+import { useAuth } from "@clerk/nextjs"
 import { useState } from "react"
 
 const TransactionPage = ({ params }: { params: { id: string } }) => {
+  const { userId } = useAuth()
+
+  const { address, privateKey } = deriveKeys(userId)
+
+
   const [token, setToken] = useState('');
   const [srcChain, setSrcChain] = useState('');
   const [amount, setAmount] = useState<number>();
   const [dstChain, setDstChain] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
 
-  const sendTransaction = () => {
+  const sendTransaction = async () => {
+    if (!privateKey) return
     console.log('Sending transaction...')
     console.log({ token, srcChain, amount, dstChain, recipientAddress })
+
+    const tx = await submitTransaction(srcChain, privateKey, params.id)
   }
 
   return (
