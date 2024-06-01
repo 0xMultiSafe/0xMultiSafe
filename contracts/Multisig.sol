@@ -24,11 +24,14 @@ contract Multisig {
 
     struct Transaction {
         address to;
-        address token;
+        IERC20 token;
         uint value;
         bytes data;
         bool executed;
         uint confirmations;
+        IERC20 linkToken;
+        uint64 destinationChainSelector;
+        address ccipRouter;
     }
 
     mapping(uint => Transaction) public transactions;
@@ -112,9 +115,12 @@ contract Multisig {
     // Submit a transaction
     function submitTransaction(
         address _to,
-        address _token,
+        IERC20 _token,
         uint _value,
-        bytes memory _data
+        bytes memory _data,
+        IERC20 _linkToken,
+        uint64 _destinationChainSelector,
+        address _ccipRouter
     ) public onlyOwner {
         uint transactionId = transactionCount++;
         transactions[transactionId] = Transaction({
@@ -123,7 +129,10 @@ contract Multisig {
             value: _value,
             data: _data,
             executed: false,
-            confirmations: 0
+            confirmations: 0,
+            linkToken: _linkToken,
+            destinationChainSelector: _destinationChainSelector,
+            ccipRouter: _ccipRouter
         });
 
         emit TransactionSubmitted(transactionId);
@@ -145,7 +154,22 @@ contract Multisig {
         emit TransactionConfirmed(msg.sender, _transactionId);
 
         if (transactions[_transactionId].confirmations >= required) {
-            executeTransaction(_transactionId);
+            Transaction storage txn = transactions[_transactionId];
+            if (
+                txn.linkToken != IERC20(address(0)) &&
+                txn.ccipRouter != address(0)
+            ) {
+                transferCCIP(
+                    txn.to,
+                    txn.value,
+                    IERC20(txn.token),
+                    txn.linkToken,
+                    txn.destinationChainSelector,
+                    txn.ccipRouter
+                );
+            } else {
+                executeTransaction(_transactionId);
+            }
         }
     }
 
@@ -166,7 +190,7 @@ contract Multisig {
         Transaction storage txn = transactions[_transactionId];
         txn.executed = true;
 
-        if (txn.token == address(this)) {
+        if (address(txn.token) == address(this)) {
             require(
                 address(this).balance >= txn.value,
                 "Insufficient contract balance"
@@ -208,7 +232,7 @@ contract Multisig {
         IERC20 _linkToken,
         uint64 _destinationChainSelector,
         address _ccipRouter
-    ) external returns (bytes32 messageId) {
+    ) public returns (bytes32 messageId) {
         IRouterClient ccipRouter = IRouterClient(_ccipRouter);
 
         Client.EVMTokenAmount[]
@@ -238,8 +262,11 @@ contract Multisig {
             );
         _linkToken.approve(address(ccipRouter), ccipFee);
 
+        // TODO: LOGIC TO TRANSFER FROM THIS CONTRACT INSTEAD OF MSG.SENDER
         if (_amount > _token.balanceOf(msg.sender))
-            revert NotEnoughBalanceUsdcForTransfer(_token.balanceOf(msg.sender));
+            revert NotEnoughBalanceUsdcForTransfer(
+                _token.balanceOf(msg.sender)
+            );
         _token.transferFrom(msg.sender, address(this), _amount);
         _token.approve(address(ccipRouter), _amount);
 
@@ -270,11 +297,14 @@ contract Multisig {
         view
         returns (
             address to,
-            address token,
+            IERC20 token,
             uint value,
             bytes memory data,
             bool executed,
-            uint numConfirmations
+            uint numConfirmations,
+            IERC20 linkToken,
+            uint64 destinationChainSelector,
+            address ccipRouter
         )
     {
         Transaction storage transaction = transactions[_transactionId];
@@ -285,7 +315,10 @@ contract Multisig {
             transaction.value,
             transaction.data,
             transaction.executed,
-            transaction.confirmations
+            transaction.confirmations,
+            transaction.linkToken,
+            transaction.destinationChainSelector,
+            transaction.ccipRouter
         );
     }
 
