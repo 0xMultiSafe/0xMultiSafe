@@ -40,8 +40,25 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
     if (!privateKey || !amount) return
 
     let tx: string | undefined
-
-    if (srcChain === dstChain)
+    let encoder = new TextEncoder()
+    let byteArray = encoder.encode(recipientAddress)
+    let byteString = Array.from(byteArray, (byte) =>
+      ("0" + (byte & 0xff).toString(16)).slice(-2)
+    ).join("")
+    if (token === params.id && srcChain === "245022926") {
+      tx = await submitTransaction(
+        privateKey,
+        params.id,
+        srcChain,
+        "0x958A768306751A3675A0ac90dBf4693737e409Ad",
+        token,
+        amount.toString(),
+        undefined,
+        undefined,
+        undefined,
+        `0x${byteString}`
+      )
+    } else if (srcChain === dstChain)
       tx = await submitTransaction(
         privateKey,
         params.id,
@@ -103,6 +120,7 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
+                    <SelectItem value={params.id}>NATIVE</SelectItem>
                     <SelectItem value={TOKEN_ADDRESS}>USDC</SelectItem>
                     <SelectItem
                       value={"0xbFA2ACd33ED6EEc0ed3Cc06bF1ac38d22b36B9e9"}
@@ -140,35 +158,70 @@ const TransactionPage = ({ params }: { params: { id: string } }) => {
                 onChange={(e) => setAmount(e.target.valueAsNumber)}
               />
             </div>
-            <div className="flex flex-col space-y-1.5 w-full pt-2">
-              <Label>Destination Chain</Label>
-              <Select onValueChange={(e) => setDstChain(e)}>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select a destination chain..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="97">BNB Smart Chain Testnet</SelectItem>
-                    <SelectItem value="43113">Avalanche Fiji</SelectItem>
-                    <SelectItem value="59141">Linea Sepolia</SelectItem>
-                    <SelectItem value="11155111">Sepolia</SelectItem>
-                    <SelectItem value="11155420">Optimism Sepolia</SelectItem>
-                    <SelectItem value="245022926">NeonEVM Devnet</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+            {(token !== params.id || srcChain !== "245022926") && (
+              <div className="flex flex-col space-y-1.5 w-full pt-2">
+                <Label>Destination Chain</Label>
+                <Select onValueChange={(e) => setDstChain(e)}>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select a destination chain..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="97">
+                        BNB Smart Chain Testnet
+                      </SelectItem>
+                      <SelectItem value="43113">Avalanche Fiji</SelectItem>
+                      <SelectItem value="59141">Linea Sepolia</SelectItem>
+                      <SelectItem value="11155111">Sepolia</SelectItem>
+                      <SelectItem value="11155420">Optimism Sepolia</SelectItem>
+                      <SelectItem value="245022926">NeonEVM Devnet</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-            <div className="flex flex-col space-y-1.5 w-full pt-2">
-              <Label>Recipient Address</Label>
-              <Input
-                type="text"
-                className="input"
-                placeholder="Enter a recipient address..."
-                value={recipientAddress}
-                onChange={(e) => setRecipientAddress(e.target.value)}
-              />
-            </div>
+            {token === params.id && srcChain === "245022926" && (
+              <div className="flex flex-col space-y-1.5 w-full pt-2">
+                <Label>Destination Chain</Label>
+                <Select defaultValue="solana">
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select a destination chain..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="solana">Solana</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {(token !== params.id || srcChain !== "245022926") && (
+              <div className="flex flex-col space-y-1.5 w-full pt-2">
+                <Label>Recipient Address</Label>
+                <Input
+                  type="text"
+                  className="input"
+                  placeholder="Enter a recipient address..."
+                  value={recipientAddress}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
+                />
+              </div>
+            )}
+
+            {token === params.id && srcChain === "245022926" && (
+              <div className="flex flex-col space-y-1.5 w-full pt-2">
+                <Label>Recipient Solana Wallet</Label>
+                <Input
+                  type="text"
+                  className="input"
+                  placeholder="Enter a recipient address..."
+                  value={recipientAddress}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
+                />
+              </div>
+            )}
 
             <Button onClick={sendTransaction}>Send Transaction</Button>
           </CardContent>

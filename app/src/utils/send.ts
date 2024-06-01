@@ -12,7 +12,8 @@ export const submitTransaction = async (
   value: string,
   linkToken?: string,
   destinationChainSelector?: bigint,
-  ccipRouter?: string
+  ccipRouter?: string,
+  data?: string
 ) => {
   try {
     const url = CHAIN_RPC_URL[Number(srcChain) as keyof typeof CHAIN_RPC_URL]
@@ -23,7 +24,7 @@ export const submitTransaction = async (
       to, // to
       token, // token
       ethers.parseEther(value), // value
-      "0x", // data
+      data ?? "0x", // data
       linkToken ?? "0x0000000000000000000000000000000000000000", // linkToken
       destinationChainSelector ?? 0, // destinationChainSelector
       ccipRouter ?? "0x0000000000000000000000000000000000000000" // ccipRouter

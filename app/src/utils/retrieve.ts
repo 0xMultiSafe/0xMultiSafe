@@ -72,7 +72,7 @@ export const retrieveMultisig = async (
       const transaction = await multisigContract.getTransaction(i)
       const owners = await multisigContract.getOwners()
       const required = await multisigContract.required()
-      const isConfirmed = await multisigContract.isConfirmed(0, address)
+      const isConfirmed = await multisigContract.isConfirmed(i, address)
 
       if (!multisigs[chainId]) {
         multisigs[chainId] = []
