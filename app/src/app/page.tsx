@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { deriveKeys } from "@/utils/derive"
 import { shortenAddress } from "@/utils/format"
-import { retrieveMultisig } from "@/utils/retrieve"
+import { retrieveMultisigs } from "@/utils/retrieve"
 import { useAuth } from "@clerk/nextjs"
 import { NextPage } from "next"
 import Image from "next/image"
@@ -22,7 +22,7 @@ const Home: NextPage = () => {
     ;(async () => {
       if (!privateKey) return undefined
 
-      const retrievedMultisigs = await retrieveMultisig(privateKey)
+      const retrievedMultisigs = await retrieveMultisigs(privateKey)
       setDeployedAddresses(retrievedMultisigs)
     })()
   }, [privateKey])

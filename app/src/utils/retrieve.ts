@@ -1,8 +1,8 @@
 import { CHAIN_RPC_URL, CREATE2_DEPLOYER_ADDRESS } from "@/constants"
-import { CREATE2_DEPLOYER_ABI } from "@/constants/abi"
+import { CREATE2_DEPLOYER_ABI, MULTISIG_ABI } from "@/constants/abi"
 import { ethers } from "ethers"
 
-export const retrieveMultisig = async (privateKey: string) => {
+export const retrieveMultisigs = async (privateKey: string) => {
   const multisigChains: { [key: string]: any[] } = {}
   const addressChains: { [key: string]: string[] } = {}
 
@@ -33,4 +33,25 @@ export const retrieveMultisig = async (privateKey: string) => {
   await Promise.all(promises)
 
   return addressChains
+}
+
+export const retrieveMultisig = async (
+  privateKey: string,
+  multisig: string
+) => {
+  const promises = Object.keys(CHAIN_RPC_URL).map(async (chainId) => {
+    const url = CHAIN_RPC_URL[Number(chainId) as keyof typeof CHAIN_RPC_URL]
+    const provider = new ethers.JsonRpcProvider(url)
+    const wallet = new ethers.Wallet(privateKey, provider)
+
+    const multisigContract = new ethers.Contract(multisig, MULTISIG_ABI, wallet)
+
+    const transactionCount = await multisigContract.getTransactionCount()
+
+    if (transactionCount === 0) return
+
+    console.log(transactionCount)
+  })
+
+  await Promise.all(promises)
 }

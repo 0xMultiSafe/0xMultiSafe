@@ -1,7 +1,9 @@
+import PendingTransactions from "@/components/common/pending-transactions"
+
 const PendingPage = ({ params }: { params: { id: string } }) => {
   return (
     <div>
-      Multisig ID: {params.id}
+      <PendingTransactions multisig={params.id} />
     </div>
   )
 }

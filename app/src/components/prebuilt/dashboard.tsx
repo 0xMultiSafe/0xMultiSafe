@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { FC, ReactNode, useEffect } from "react"
+import React, { FC, ReactNode, useEffect } from "react"
 import {
   SignedOut,
   SignInButton,
@@ -148,14 +148,14 @@ const Dashboard: FC<Props> = ({ children }) => {
                   )
                   const route = `${paths.slice(0, i + 1).join("/")}`
                   return (
-                    <>
+                    <React.Fragment key={route}>
                       <BreadcrumbItem>
                         <BreadcrumbLink href={route === "" ? "/" : route}>
                           {path}
                         </BreadcrumbLink>
                       </BreadcrumbItem>
                       {i < pathnames.length - 1 && <BreadcrumbSeparator />}
-                    </>
+                    </React.Fragment>
                   )
                 })}
               </BreadcrumbList>
