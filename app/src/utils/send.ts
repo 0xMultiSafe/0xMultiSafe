@@ -16,8 +16,8 @@ export const submitTransaction = async (
   console.log(multisigContract)
   const tx = await multisigContract.submitTransaction(
     "0x1e839e79DF349cd220bBBCED6f9EC2351f5ECB17", // to
-    "0x1e839e79DF349cd220bBBCED6f9EC2351f5ECB17", // token
-    10000, // value
+    "0x3c936d1f6fed29ebb38d6b77d53af2ef68002258", // token
+    ethers.parseEther("10"), // value
     "0x", // data
     "0x0000000000000000000000000000000000000000", // linkToken
     0, // destinationChainSelector
