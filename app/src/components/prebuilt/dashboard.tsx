@@ -39,6 +39,7 @@ import { shortenAddress } from "@/utils/format"
 import { copy } from "@/utils/copy"
 import { faucetDrip } from "@/utils/faucet"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface Props {
   children: ReactNode
@@ -68,7 +69,7 @@ const Dashboard: FC<Props> = ({ children }) => {
         <div className="border-b p-2">
           <a href="/">
             <Button variant="outline" size="icon" aria-label="Home">
-              <Triangle className="size-5 fill-foreground" />
+              <Image src="/logo.svg" alt="Logo" width={24} height={24} />
             </Button>
           </a>
         </div>
