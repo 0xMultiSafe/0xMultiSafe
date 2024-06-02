@@ -27,7 +27,7 @@ const Home: NextPage = () => {
     })()
   }, [privateKey])
 
-  if (!userId) return <div>Not signed in</div>
+  if (!userId) return undefined
 
   return (
     <div className="flex flex-col gap-6">
