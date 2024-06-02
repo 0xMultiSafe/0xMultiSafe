@@ -63,7 +63,7 @@ const Home: NextPage = () => {
           </a>
         ))
       ) : (
-        <div>Loading...</div>
+        undefined
       )}
     </div>
   )
