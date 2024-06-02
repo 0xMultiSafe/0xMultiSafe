@@ -44,6 +44,8 @@ export const retrieveMultisigs = async (privateKey: string) => {
 
   await Promise.all(promises)
 
+  console.log("Retrieved multisigs", addressChains)
+
   return addressChains
 }
 

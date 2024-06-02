@@ -49,37 +49,56 @@ import { ethers } from "ethers"
     const provider = new ethers.providers.JsonRpcProvider(
         "https://devnet.neonevm.org"
     )
+
+    const amount = 1
+    const solanaWallet = new PublicKey(
+        "56i17KWd1uJCn2kCd8b72uwwryH5oswQ3dc4dJNDquVP"
+    )
+
+    console.log(`Sending ${amount} to ${solanaWallet.toString()}...`)
+
+    const transaction = await neonNeonTransactionWeb3(
+        web3,
+        neonWallet.address,
+        tokenContract,
+        solanaWallet,
+        amount
+    )
+    const hash = await sendSignedTransaction(web3, transaction, neonWallet)
+    console.log("Transaction hash:", hash)
     const addressToWatch = neonWallet.address // replace with the address you want to watch
 
-    provider.on("block", async (blockNumber) => {
-        const block = await provider.getBlockWithTransactions(blockNumber)
-        for (const tx of block.transactions) {
-            if (tx.to === addressToWatch) {
-                console.log("Incoming transaction")
+    // provider.on("block", async (blockNumber) => {
+    //     const block = await provider.getBlockWithTransactions(blockNumber)
+    //     for (const tx of block.transactions) {
+    //         if (tx.to === addressToWatch) {
+    //             console.log("Incoming transaction")
 
-                const amount = Number(tx.value) / 1e18
-                const solanaWallet = new PublicKey(
-                    Buffer.from(tx.data.replace("0x", ""), "hex").toString()
-                )
+    //             const amount = Number(tx.value) / 1e18
+    //             const solanaWallet = new PublicKey(
+    //                 Buffer.from(tx.data.replace("0x", ""), "hex").toString()
+    //             )
 
-                console.log(`Sending ${amount} to ${solanaWallet.toString()}...`)
+    //             console.log(
+    //                 `Sending ${amount} to ${solanaWallet.toString()}...`
+    //             )
 
-                const transaction = await neonNeonTransactionWeb3(
-                    web3,
-                    neonWallet.address,
-                    tokenContract,
-                    solanaWallet,
-                    amount
-                )
-                const hash = await sendSignedTransaction(
-                    web3,
-                    transaction,
-                    neonWallet
-                )
-                console.log("Transaction hash:", hash)
-            }
-        }
-    })
-    // Keep the script running indefinitely
-    await new Promise(() => {})
+    //             const transaction = await neonNeonTransactionWeb3(
+    //                 web3,
+    //                 neonWallet.address,
+    //                 tokenContract,
+    //                 solanaWallet,
+    //                 amount
+    //             )
+    //             const hash = await sendSignedTransaction(
+    //                 web3,
+    //                 transaction,
+    //                 neonWallet
+    //             )
+    //             console.log("Transaction hash:", hash)
+    //         }
+    //     }
+    // })
+    // // Keep the script running indefinitely
+    // await new Promise(() => {})
 })()

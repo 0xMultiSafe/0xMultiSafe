@@ -4,7 +4,7 @@ export const CHAIN_RPC_URL = {
   59141: "https://rpc.sepolia.linea.build",
   11155111: "https://rpc.ankr.com/eth_sepolia",
   11155420: "https://sepolia.optimism.io",
-  245022926: "https://devnet.neonevm.org",
+  245022926: "https://neon-evm-devnet.drpc.org",
 }
 
 export const CREATE2_DEPLOYER_ADDRESS =
