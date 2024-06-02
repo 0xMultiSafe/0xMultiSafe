@@ -1,32 +1,42 @@
-# Sample Hardhat Project
+# 0xMultiSafe
 
-## Tests
+0x2FA is a decentralized solution for two-factor authentication (2FA), aiming to replace traditional solutions like Google’s Authenticator. By leveraging Oasis, Bandada, and Near, we provide a privacy-based solution that enhances the security of both web2 and web3 applications.
 
-·-----------------------------------|----------------------------|-------------|----------------------------·
-|       Solc version: 0.8.24        ·  Optimizer enabled: false  ·  Runs: 200  ·  Block limit: 6718946 gas  │
-····································|····························|·············|·····························
-|  Methods                                                                                                  │
-·············|······················|·············|··············|·············|··············|··············
-|  Contract  ·  Method              ·  Min        ·  Max         ·  Avg        ·  # calls     ·  usd (avg)  │
-·············|······················|·············|··············|·············|··············|··············
-|  Multisig  ·  confirmTransaction  ·      77185  ·      100945  ·      86689  ·           5  ·          -  │
-·············|······················|·············|··············|·············|··············|··············
-|  Multisig  ·  submitTransaction   ·          -  ·           -  ·     123567  ·           4  ·          -  │
-·············|······················|·············|··············|·············|··············|··············
-|  Deployments                      ·                                          ·  % of limit  ·             │
-····································|·············|··············|·············|··············|··············
-|  Multisig                         ·          -  ·           -  ·    2914362  ·      43.4 %  ·          -  │
-····································|·············|··············|·············|··············|··············
-|  Token                            ·          -  ·           -  ·     964012  ·      14.3 %  ·          -  │
-·-----------------------------------|-------------|--------------|-------------|--------------|-------------·
+## 🎥 Video Demo
 
-## Deployments
+You can watch a video demonstration of our project [here](https://youtu.be/EtJ2yyX6H9s).
 
+## 🚀 Live Demo
+
+You can try out our live demo at [0xmultisafe.vercel.app](https://0xmultisafe.vercel.app).
+
+## 🏆 Bounties
+
+- BNB Chain
+- Chainlink CCIP
+- NeonEVM
+- Linea
+- Optimism
+
+## 🚀 Getting Started
+
+### Running the App Locally
+
+To run the app on your local machine, navigate to the app directory, install the dependencies, and start the development server:
+
+```sh
+cd app
+yarn
+yarn dev
 ```
-hh deploy --network sepolia # 0.007232837200520256
-hh deploy --network linea_sepolia # 0.000932066991529404
-hh deploy --network optimism_sepolia # 0.045860773792959276
-hh deploy --network neon_devnet # 33.90960587636594
-hh deploy --network bsc_testnet # unknown
-hh deploy --network fiji # 0.0983476
+
+### Deploying the Contracts
+
+To deploy the contracts, install the dependencies and use the Hardhat deploy command:
+
+```sh
+yarn
+hh deploy --network <NETWORK> --contract <CONTRACT> --save --verify
 ```
+
+Replace <NETWORK> and <CONTRACT> with the desired network and contract name, respectively.
