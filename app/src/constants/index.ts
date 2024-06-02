@@ -2,7 +2,7 @@ export const CHAIN_RPC_URL = {
   97: "https://bsc-testnet-rpc.publicnode.com",
   43113: "https://rpc.ankr.com/avalanche_fuji",
   59141: "https://rpc.sepolia.linea.build",
-  11155111: "https://rpc.ankr.com/eth_sepolia",
+  11155111: "https://sepolia.drpc.org",
   11155420: "https://sepolia.optimism.io",
   245022926: "https://neon-evm-devnet.drpc.org",
 }
